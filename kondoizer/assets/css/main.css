@@ -1,0 +1,24 @@
+li.show {
+    visibility: visible;
+    border: red solid 1px;
+}
+
+li.hide {
+    visibility: collapse;
+    border: blue solid 1px;
+}
+
+div.show {
+     visibility: visible;
+    border: green solid 1px;
+ }
+
+div.hide {
+    visibility: collapse;
+    border: purple solid 1px;
+}
+
+p.lead {
+    border: red solid 1px;
+
+}

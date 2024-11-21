@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/starter-template/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/starter-template.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/panel.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Kondoizer for Bluesky</a>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active loggedin-hidden">
+            <a class="nav-link" href="#" id="nav-login">Login</a>
+          </li>
+          <li class="nav-item active loggedout-hidden">
+            <a class="nav-link" href="#" id="nav-logout">Logout</a>
+          </li>
+          <li class="nav-item active dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Post Type…</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Posts</a>
+              <a class="dropdown-item" href="#">Replies</a>
+              <a class="dropdown-item" href="#">Likes</a>
+            </div>
+          </li>
+          <li class="nav-item active dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More…</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown02">
+              <a class="dropdown-item" href="#">About</a>
+              <a class="dropdown-item" href="#">Help</a>
+              <a class="dropdown-item" href="#">Terms of Service</a>
+              <a class="dropdown-item" href="#">Privacy Policy</a>
+            </div>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+
+      <div class="main">
+        <h1>Kondoizer for Bluesky: Keeping it Clean</h1>
+        <div class="loggedin-hidden">
+        <p class="lead">Log in to get your posts. Login ID and passwords stay on your machine.</p>
+          <p>If you're running this on a shared or public machine, you shouldn't save your password.</p>
+        </div>
+
+        <div class="login-panel loggedin-hidden">
+          <p>Enter your login details for bluesky. <br>
+            <b>These details stay on this device -- they are not sent anywhere on the internet except to Bluesky.</b><br>
+            <b>Do not let the system save your password on public accounts, or a borrowed device.</b>
+          </p>
+          <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" >Login</button>
+          </form>
+        </div>
+        <p class="lead">Ready are we recording</p>
+      </div>
+
+    </main><!-- /.container -->
+
+<!--  Their scripts-->
+    <script src="./assets/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="./assets/js/popper.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+<!--  Our scripts-->
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
