@@ -8,6 +8,16 @@ let loginInfo;
 let feedCursor = null;
 let feedList = null;
 
+const PREFER_POSTS = 1;
+const PREFER_REPLIES = 2;
+const PREFER_LIKES = 3;
+const selectionTypeFromRadioButtons = {
+    "getPostFeed" : PREFER_POSTS,
+    "getReplyFeed": PREFER_REPLIES,
+    "getLikeFeed": PREFER_LIKES
+}
+let preferredFeedType = PREFER_POSTS;
+
 async function loginThroughAgent(loginUsername, loginPassword) {
     if (!agent) {
         agent = new BskyAgent({
@@ -41,9 +51,13 @@ async function updateFeed(loginInfo) {
     if (feedCursor) {
         h.cursor = feedCursor;
     }
-    const feed = await agent.app.bsky.feed.getAuthorFeed(h);
+    let func = preferredFeedType === PREFER_LIKES ? 'getActorLikes' : 'getAuthorFeed';
+    if (preferredFeedType === PREFER_POSTS) {
+        h.filter = "posts_no_replies"
+    }
+    const feed = await agent.app.bsky.feed[func](h);
     console.log(`QQQ: Stop here`);
-    console.table(feed);
+    // console.table(feed);
     if (!feed || !feed.success) {
         throw new Error("Failed to get a feed");
     }
@@ -67,10 +81,17 @@ function populateFeed(feed) {
     if (!feedList) {
         return;
     }
+    let func = preferredFeedType === PREFER_LIKES ? 'getActorLikes' : 'getAuthorFeed';
+    // if (preferredFeedType === PREFER_POSTS) {
+    //     h.filter = "posts_no_replies"
+    // }
     feed.data.feed.forEach((item, i) => {
         const post = item.post;
         const uri = post.uri;
         const record = post.record;
+        if (preferredFeedType === PREFER_REPLIES && !record.reply) {
+            return;
+        }
         const text = record.text;
         const date = new Date(record.createdAt).toLocaleString();
         const liString = `${ i }. ${ text } -- ${ date }`;
@@ -124,6 +145,28 @@ function setupEvents() {
     loginForm = document.getElementById('login-form');
     loginForm.addEventListener('submit', handleSubmitLogin);
     feedList = document.getElementById('feedListAnchor');
+    document.querySelectorAll('div.feedTypeForm .form-check-input').forEach((elt) => {
+        elt.addEventListener('change', handleFeedTypeChange);
+    });
+}
+
+function handleFeedTypeChange(event) {
+    const oldPreferredFeedType = preferredFeedType;
+    const form = event.currentTarget;
+    event.preventDefault();
+    event.target.parentElement.parentElement.classList.remove('show');
+    preferredFeedType = selectionTypeFromRadioButtons[event.target.id];
+    if (!preferredFeedType) {
+        throw new Error(`Can't figure out how to change to ${ event.target.id }`);
+    }
+    if (preferredFeedType !== oldPreferredFeedType) {
+        feedCursor = null;
+    }
+    if (loggedIn) {
+        updateFeed(loginInfo);
+    } else {
+        console.log("You still need to log in")
+    }
 }
 
 function tryLoggingInThroughStorage() {
@@ -152,6 +195,13 @@ function initialize() {
     // tryLoggingInThroughStorage();
     if (!loggedIn) {
         toggleLoggedInViews();
+    }
+    try {
+        const selectedId = document.querySelectorAll('.form-check.feedTypeForm input.form-check-input[checked]')[0].id;
+        const x = selectionTypeFromRadioButtons[selectedId];
+        preferredFeedType = x || PREFER_POSTS;
+    } catch(ex) {
+        console.log(`Failed to find the selected item: ${ ex }`)
     }
     console.log("stop here")
 }

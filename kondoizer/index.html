@@ -38,9 +38,26 @@
           <li class="nav-item active dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Post Type…</a>
             <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Posts</a>
-              <a class="dropdown-item" href="#">Replies</a>
-              <a class="dropdown-item" href="#">Likes</a>
+
+              <div class="form-check feedTypeForm">
+                <input class="form-check-input" type="radio" name="FeedType" id="getPostFeed" checked>
+                <label class="form-check-label" for="getPostFeed">
+                  Posts
+                </label>
+              </div>
+              <div class="form-check feedTypeForm">
+                <input class="form-check-input" type="radio" name="FeedType" id="getReplyFeed">
+                <label class="form-check-label" for="getReplyFeed">
+                  Replies
+                </label>
+              </div>
+              <div class="form-check feedTypeForm">
+                <input class="form-check-input" type="radio" name="FeedType" id="getLikeFeed">
+                <label class="form-check-label" for="getLikeFeed">
+                  Likes
+                </label>
+              </div>
+
             </div>
           </li>
           <li class="nav-item active dropdown">
