@@ -12,7 +12,7 @@ async function loginThroughAgent(loginUsername, loginPassword) {
             service: "https://bsky.social"
         });
     }
-    await agent.login({
+    return await agent.login({
         identifier: loginUsername,
         password: loginPassword
     });
@@ -51,13 +51,13 @@ async function doLogout(event) {
     toggleLoggedInViews();
 }
 
-function handleSubmitLogin(event) {
+async function handleSubmitLogin(event) {
     event.preventDefault();
     loggedIn = true;
     const form = event.currentTarget;
     const loginUsername = form.querySelector("#username").value.trim();
     const loginPassword = form.querySelector("#password").value.trim();
-    const info = loginThroughAgent(loginUsername, loginPassword);
+    const info = await loginThroughAgent(loginUsername, loginPassword);
     if (info) {
         toggleLoggedInViews();
     }
