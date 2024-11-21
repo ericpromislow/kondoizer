@@ -1,7 +1,6 @@
 import { BskyAgent }  from '@atproto/api';
 
 let loggedIn = false;
-let navLoginButton = null;
 let loginForm = null;
 let navLogoutButton = null;
 let agent = null;
@@ -27,7 +26,10 @@ async function loginThroughAgent(loginUsername, loginPassword) {
     loginInfo = info.data;
     localStorage.setItem("loggedInData", JSON.stringify(loginInfo));
     loggedIn = true;
-    $('#nav-span-username').textContent = "moishe";
+    const elt = document.querySelector('span#nav-span-username');
+    if (elt) {
+        elt.textContent = "moishe";
+    }
     return loginInfo;
 }
 
@@ -100,12 +102,6 @@ function toggleLoggedInViews() {
     }
 }
 
-function doLogin(event) {
-    event.preventDefault();
-    loggedIn = true;
-    toggleLoggedInViews();
-}
-
 async function doLogout(event) {
     event.preventDefault();
     loggedIn = false;
@@ -123,8 +119,6 @@ async function handleSubmitLogin(event) {
 }
 
 function setupEvents() {
-    navLoginButton = document.getElementById('nav-login');
-    navLoginButton.addEventListener('click', doLogin);
     navLogoutButton = document.getElementById('nav-logout');
     navLogoutButton.addEventListener('click', doLogout);
     loginForm = document.getElementById('login-form');
@@ -132,11 +126,7 @@ function setupEvents() {
     feedList = document.getElementById('feedListAnchor');
 }
 
-function initialize() {
-    loggedIn = false;
-    console.log("Ready are we recording");
-    // toastr.info("Ready are we recording");
-    setupEvents();
+function tryLoggingInThroughStorage() {
     try {
         localStorage.setItem("loggedInData", JSON.stringify(loginInfo));
         const loggedInDataString = localStorage.getItem("loggedInData");
@@ -152,6 +142,14 @@ function initialize() {
     } catch(ex) {
         console.log(`Ignore error ${ex} `)
     }
+}
+
+function initialize() {
+    loggedIn = false;
+    console.log("Ready are we recording");
+    // toastr.info("Ready are we recording");
+    setupEvents();
+    // tryLoggingInThroughStorage();
     if (!loggedIn) {
         toggleLoggedInViews();
     }
