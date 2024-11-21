@@ -29,6 +29,9 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
+          <li class="nav-item loggedout-hidden" id="nav-username">
+          Logged in as <span id="nav-span-username"></span>
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
           </li>
@@ -86,6 +89,10 @@
 
             <button type="submit" >Login</button>
           </form>
+        </div>
+
+        <div class="feed loggedout-hidden">
+          <ul class="feed" id="feedListAnchor"></ul>
         </div>
         <p class="lead">Ready are we recording</p>
       </div>
