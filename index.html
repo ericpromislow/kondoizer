@@ -121,17 +121,27 @@
             <a href="#" id="previousPage" class="hide">Previous</a> |
             <a href="#" id="nextPage" class="hide">Next</a>
           </div>
-
         </div>
-        <p class="lead">Ready are we recording</p>
       </div>
 
     </main><!-- /.container -->
 
 <!--  Their scripts-->
+    <!-- Works locally with `npm run dev`, but vite won't bundle -->
     <script src="./assets/js/jquery-3.2.1.slim.min.js"></script>
     <script src="./assets/js/popper.min.js"></script>
     <script src="./assets/js/bootstrap.min.js"></script>
+
+    <!-- Errors: undefined vars at top-level in popper and bootstrap -->
+    <!--    <script src="./assets/js/jquery-3.2.1.slim.min.js" type="module"></script>-->
+    <!--    <script src="./assets/js/popper.min.js" type="module"></script>-->
+    <!--    <script src="./assets/js/bootstrap.min.js" type="module"></script>-->
+
+    <!-- popper is CommonJS-->
+    <!--    <script src="./assets/js/jquery-3.7.1.slim.js" type="module"></script>-->
+    <!--    <script src="./assets/js/popper-2.4.4.js" type="module"></script>-->
+    <!--    <script src="./assets/js/bootstrap-4.0.0.js" type="module"></script>-->
+
 <!--  Our scripts-->
     <script src="main.js" type="module"></script>
   </body>
