@@ -103,11 +103,25 @@
         </div>
 
         <div class="feed loggedout-hidden">
-          <ul class="feed" id="feedListAnchor"></ul>
+          <table id="posts">
+            <thead class="feed-row">
+              <td class="feed-item" width="5%"><input type=checkbox name="checkboxMaster"></td>
+              <td class="feed-item" width="25%">Published at</td>
+              <td class="feed-item" width="60%">Text</td>
+            </thead>
+            <tbody id="feedListAnchor"></tbody>
+          </table>
+          <br/>
+          <p><b>Warning: There is no confirm or undo when you delete these; they're gone for good</b></p>
+          <br/>
+          <button disabled="true" id="delete-tweets">Delete Selected Entries</button>
+          <br/>
+          <br/>
           <div id="pagination">
             <a href="#" id="previousPage" class="hide">Previous</a> |
             <a href="#" id="nextPage" class="hide">Next</a>
           </div>
+
         </div>
         <p class="lead">Ready are we recording</p>
       </div>

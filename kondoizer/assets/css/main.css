@@ -34,6 +34,19 @@ a.hide {
     border: purple solid 1px;
 }
 
+table#posts {
+    margin-top: 5rem;
+}
+
+tr.feed-row, thead.feed-row {
+    border-top: #888888 1px solid;
+    border-bottom: #888888 1px solid;
+}
+
+button#delete-tweets {
+    border: 2px solid crimson;
+}
+
 p.lead {
     border: red solid 1px;
 }

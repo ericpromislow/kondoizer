@@ -10,6 +10,8 @@ const cursors = [null];
 let cursorIndex = 0;
 let previousPageLink = null;
 let nextPageLink = null;
+let checkboxMaster = null;
+let deleteTweetsButton = null;
 
 const PREFER_POSTS = 1;
 const PREFER_REPLIES = 2;
@@ -76,6 +78,7 @@ async function updateFeed(loginInfo, feedCursor=undefined) {
         addCursor(feed.data.cursor)
     }
     updateLinksBasedOnCursor();
+    updateDeleteButtonStatus();
 }
 
 async function doPreviousPage(event) {
@@ -101,9 +104,6 @@ function clearFeed() {
 }
 
 function populateFeed(feed) {
-    if (!feedList) {
-        return;
-    }
     let func = preferredFeedType === PREFER_LIKES ? 'getActorLikes' : 'getAuthorFeed';
     // if (preferredFeedType === PREFER_POSTS) {
     //     h.filter = "posts_no_replies"
@@ -118,12 +118,24 @@ function populateFeed(feed) {
         }
         const text = record.text;
         const date = new Date(record.createdAt).toLocaleString();
-        const liString = `${ itemNumber }. ${ text } -- ${ date }`;
-        const liItem = document.createElement("li");
-        liItem.textContent = liString;
-        liItem.setAttribute("uri", uri);
-        feedList.appendChild(liItem);
+        const td1 = document.createElement("td");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.setAttribute("uri", uri);
+        cb.setAttribute("name", "delete-check");
+        cb.addEventListener('click', updateDeleteButtonStatus);
+        td1.appendChild(cb);
+        const td2 = document.createElement("td");
+        td2.textContent = date;
+        const td3 = document.createElement("td");
+        td3.textContent = text;
         itemNumber += 1;
+        const tr = document.createElement("tr");
+        tr.classList.add("feed-row")
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        feedList.appendChild(tr);
     });
 }
 
@@ -160,6 +172,18 @@ function updateLinksBasedOnCursor() {
     }
 }
 
+function doCheckboxMaster(event) {
+    const status = event.target.checked;
+    document.querySelectorAll('table#posts tbody#feedListAnchor td input').forEach((elt) => {
+        elt.checked = status;
+    });
+    setTimeout(updateDeleteButtonStatus, 1);
+}
+
+function doDeleteTweets(event) {
+console.log("QQQ: Implement me!");
+}
+
 function toggleLoggedInViews() {
     const visClasses = ["show", "hide", "show"];
     let firstIndex = loggedIn ? 1 : 0;
@@ -179,6 +203,12 @@ function toggleLoggedInViews() {
         elem.classList.add(visClasses[firstIndex + 0]);
         elem.classList.remove(visClasses[firstIndex + 1]);
     }
+    updateDeleteButtonStatus();
+}
+
+function updateDeleteButtonStatus() {
+    const list = Array.from(document.querySelectorAll('table#posts tbody#feedListAnchor td input'));
+    deleteTweetsButton.disabled = !list.some(elt => elt.checked);
 }
 
 async function doLogout(event) {
@@ -209,7 +239,11 @@ function setupEvents() {
     previousPageLink = document.querySelector('div#pagination a#previousPage');
     previousPageLink.addEventListener('click', doPreviousPage)
     nextPageLink = document.querySelector('div#pagination a#nextPage');
-    nextPageLink.addEventListener('click', doNextPage)
+    nextPageLink.addEventListener('click', doNextPage);
+    checkboxMaster = document.querySelector('table#posts thead td input[name="checkboxMaster"]');
+    checkboxMaster.addEventListener('click', doCheckboxMaster);
+    deleteTweetsButton = document.getElementById('delete-tweets');
+    deleteTweetsButton.addEventListener('click', doDeleteTweets);
 }
 
 function handleFeedTypeChange(event) {
