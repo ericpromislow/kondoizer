@@ -5,8 +5,11 @@ let loginForm = null;
 let navLogoutButton = null;
 let agent = null;
 let loginInfo;
-let feedCursor = null;
 let feedList = null;
+const cursors = [null];
+let cursorIndex = 0;
+let previousPageLink = null;
+let nextPageLink = null;
 
 const PREFER_POSTS = 1;
 const PREFER_REPLIES = 2;
@@ -17,6 +20,7 @@ const selectionTypeFromRadioButtons = {
     "getLikeFeed": PREFER_LIKES
 }
 let preferredFeedType = PREFER_POSTS;
+
 
 async function loginThroughAgent(loginUsername, loginPassword) {
     if (!agent) {
@@ -43,11 +47,12 @@ async function loginThroughAgent(loginUsername, loginPassword) {
     return loginInfo;
 }
 
-async function updateFeed(loginInfo) {
+async function updateFeed(loginInfo, feedCursor=undefined) {
     const h = {
         limit: 10,
         actor: loginInfo.did
     };
+    feedCursor ||= currentCursor();
     if (feedCursor) {
         h.cursor = feedCursor;
     }
@@ -66,9 +71,27 @@ async function updateFeed(loginInfo) {
     }
     clearFeed();
     populateFeed(feed);
-    if (feed.data.cursor) {
-        feedCursor = feed.data.cursor;
+    if (feed.data.cursor && feed.data.feed.length === h.limit) {
+        // Likes keep barrelling through without finding anything.
+        addCursor(feed.data.cursor)
     }
+    updateLinksBasedOnCursor();
+}
+
+async function doPreviousPage(event) {
+    if (cursorIndex <= 0) {
+        throw new Error("Can't go previous at page 1")
+    }
+    cursorIndex -= 1;
+    await updateFeed(loginInfo, currentCursor())
+}
+
+async function doNextPage(event) {
+    if (cursorIndex >= cursors.length - 1) {
+        throw new Error("Can't go to next page at end")
+    }
+    cursorIndex += 1;
+    await updateFeed(loginInfo, currentCursor())
 }
 
 function clearFeed() {
@@ -85,6 +108,7 @@ function populateFeed(feed) {
     // if (preferredFeedType === PREFER_POSTS) {
     //     h.filter = "posts_no_replies"
     // }
+    let itemNumber = 1;
     feed.data.feed.forEach((item, i) => {
         const post = item.post;
         const uri = post.uri;
@@ -94,12 +118,46 @@ function populateFeed(feed) {
         }
         const text = record.text;
         const date = new Date(record.createdAt).toLocaleString();
-        const liString = `${ i }. ${ text } -- ${ date }`;
+        const liString = `${ itemNumber }. ${ text } -- ${ date }`;
         const liItem = document.createElement("li");
         liItem.textContent = liString;
         liItem.setAttribute("uri", uri);
         feedList.appendChild(liItem);
+        itemNumber += 1;
     });
+}
+
+function clearCursor() {
+    cursorIndex = 0;
+    cursors.splice(1, cursors.length - 1);
+}
+
+function addCursor(cursor) {
+    while (cursors.length <= cursorIndex + 1) {
+        cursors.push("");
+    }
+    cursors[cursorIndex + 1] = cursor;
+}
+
+function currentCursor() {
+    return cursors[cursorIndex];
+}
+
+function updateLinksBasedOnCursor() {
+    if (cursorIndex > 0) {
+        previousPageLink.classList.remove('hide');
+        previousPageLink.classList.add('show');
+    } else {
+        previousPageLink.classList.remove('show');
+        previousPageLink.classList.add('hide');
+    }
+    if (cursorIndex < cursors.length - 1) {
+        nextPageLink.classList.remove('hide');
+        nextPageLink.classList.add('show');
+    } else {
+        nextPageLink.classList.remove('show');
+        nextPageLink.classList.add('hide');
+    }
 }
 
 function toggleLoggedInViews() {
@@ -148,6 +206,10 @@ function setupEvents() {
     document.querySelectorAll('div.feedTypeForm .form-check-input').forEach((elt) => {
         elt.addEventListener('change', handleFeedTypeChange);
     });
+    previousPageLink = document.querySelector('div#pagination a#previousPage');
+    previousPageLink.addEventListener('click', doPreviousPage)
+    nextPageLink = document.querySelector('div#pagination a#nextPage');
+    nextPageLink.addEventListener('click', doNextPage)
 }
 
 function handleFeedTypeChange(event) {
@@ -160,7 +222,7 @@ function handleFeedTypeChange(event) {
         throw new Error(`Can't figure out how to change to ${ event.target.id }`);
     }
     if (preferredFeedType !== oldPreferredFeedType) {
-        feedCursor = null;
+        clearCursor();
     }
     if (loggedIn) {
         updateFeed(loginInfo);

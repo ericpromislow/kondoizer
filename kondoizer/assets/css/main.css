@@ -1,22 +1,34 @@
 li.show {
     visibility: visible;
     display: block;
-    border: red solid 1px;
+    /*border: red solid 1px;*/
 }
 
 li.hide {
     visibility: collapse;
     display: none;
-    border: blue solid 1px;
+    /*border: blue solid 1px;*/
 }
 
 div.show {
     visibility: visible;
     display: block;
-    border: green solid 1px;
+    /*border: green solid 1px;*/
  }
 
 div.hide {
+    visibility: collapse;
+    display: none;
+    /*border: purple solid 1px;*/
+}
+
+a.show {
+    visibility: visible;
+    display: inline;
+    border: green solid 1px;
+}
+
+a.hide {
     visibility: collapse;
     display: none;
     border: purple solid 1px;
