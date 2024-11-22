@@ -83,17 +83,27 @@ async function updateFeed(loginInfo, feedCursor=undefined) {
 
 async function doDeleteTweets(event) {
     const itemsToDelete = Array.from(document.querySelectorAll('table#posts tbody#feedListAnchor td input')).filter(elt => elt.checked);
-    const h = {
-        repo: loginInfo.did,
-        collection: "app.bsky.feed.post",
-        rkey: "rkey here",
-    };
-    for (const elt of itemsToDelete) {
-        h.rkey = elt.getAttribute("cid");
-        // const result = await agent.com.atproto.repo.deleteRecord(h);
-        const func = [0, 'deletePost', 'deletePost', 'deleteLike'][preferredFeedType];
-        const result = await agent[func](elt.getAttribute("uri"));
-        console.log(`QQQ: Deleting ${ h.rkey } => ${ result }`);
+    if (preferredFeedType === PREFER_POSTS || preferredFeedType === PREFER_REPLIES) {
+        for (const elt of itemsToDelete) {
+            const result = await agent.deletePost(elt.getAttribute("uri"));
+            console.log(`QQQ: Deleting ${ elt.getAttribute("uri") } => ${ result }`);
+        }
+    } else {
+        for (const elt of itemsToDelete) {
+            const result = await agent.deleteLike(elt.getAttribute("viewer-like"));
+            console.log(`QQQ: Deleting ${ elt.getAttribute("uri") } => ${ result }`);
+        }
+        // const h = {
+        //     repo: loginInfo.did,
+        //     collection: "app.bsky.feed.post",
+        //     rkey: "rkey here",
+        // };
+        // for (const elt of itemsToDelete) {
+        //     h.rkey = elt.getAttribute("cid");
+        //     const result = await agent.com.atproto.repo.deleteRecord(h);
+        //     // const result = await agent[func](elt.getAttribute("uri"));
+        //     console.log(`QQQ: Deleting ${h.rkey} => ${result}`);
+        // }
     }
     await updateFeed(loginInfo);
 }
@@ -141,6 +151,9 @@ function populateFeed(feed) {
         cb.setAttribute("uri", uri);
         cb.setAttribute("cid", post.cid);
         cb.setAttribute("name", "delete-check");
+        if (preferredFeedType === PREFER_LIKES) {
+            cb.setAttribute("viewer-like", post.viewer.like);
+        }
         cb.addEventListener('click', updateDeleteButtonStatus);
         td1.appendChild(cb);
         const td2 = document.createElement("td");
