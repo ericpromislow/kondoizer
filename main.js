@@ -44,7 +44,7 @@ async function loginThroughAgent(loginUsername, loginPassword) {
     loggedIn = true;
     const elt = document.querySelector('span#nav-span-username');
     if (elt) {
-        elt.textContent = "moishe";
+        elt.textContent = loginUsername;
     }
     return loginInfo;
 }
@@ -79,6 +79,23 @@ async function updateFeed(loginInfo, feedCursor=undefined) {
     }
     updateLinksBasedOnCursor();
     updateDeleteButtonStatus();
+}
+
+async function doDeleteTweets(event) {
+    const itemsToDelete = Array.from(document.querySelectorAll('table#posts tbody#feedListAnchor td input')).filter(elt => elt.checked);
+    const h = {
+        repo: loginInfo.did,
+        collection: "app.bsky.feed.post",
+        rkey: "rkey here",
+    };
+    for (const elt of itemsToDelete) {
+        h.rkey = elt.getAttribute("cid");
+        // const result = await agent.com.atproto.repo.deleteRecord(h);
+        const func = [0, 'deletePost', 'deletePost', 'deleteLike'][preferredFeedType];
+        const result = await agent[func](elt.getAttribute("uri"));
+        console.log(`QQQ: Deleting ${ h.rkey } => ${ result }`);
+    }
+    await updateFeed(loginInfo);
 }
 
 async function doPreviousPage(event) {
@@ -122,6 +139,7 @@ function populateFeed(feed) {
         const cb = document.createElement("input");
         cb.type = "checkbox";
         cb.setAttribute("uri", uri);
+        cb.setAttribute("cid", post.cid);
         cb.setAttribute("name", "delete-check");
         cb.addEventListener('click', updateDeleteButtonStatus);
         td1.appendChild(cb);
@@ -178,10 +196,6 @@ function doCheckboxMaster(event) {
         elt.checked = status;
     });
     setTimeout(updateDeleteButtonStatus, 1);
-}
-
-function doDeleteTweets(event) {
-console.log("QQQ: Implement me!");
 }
 
 function toggleLoggedInViews() {
