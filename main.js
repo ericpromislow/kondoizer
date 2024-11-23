@@ -320,7 +320,7 @@ function initialize() {
         toggleLoggedInViews();
     }
     try {
-        const selectedId = document.querySelectorAll('.form-check.feedTypeForm input.form-check-input[checked]')[0].id;
+        const selectedId = Array.from(document.querySelectorAll('.form-check.feedTypeForm input.form-check-input')).filter(x => x.checked)[0].id;
         const x = selectionTypeFromRadioButtons[selectedId];
         preferredFeedType = x || PREFER_POSTS;
     } catch(ex) {
