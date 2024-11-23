@@ -82,7 +82,8 @@ async function updateFeed(loginInfo, feedCursor=undefined) {
 }
 
 async function doDeleteTweets(event) {
-    const itemsToDelete = Array.from(document.querySelectorAll('table#posts tbody#feedListAnchor td input')).filter(elt => elt.checked);
+    const candidateItems = Array.from(document.querySelectorAll('table#posts tbody#feedListAnchor td input'))
+    const itemsToDelete = candidateItems.filter(elt => elt.checked);
     if (preferredFeedType === PREFER_POSTS || preferredFeedType === PREFER_REPLIES) {
         for (const elt of itemsToDelete) {
             const result = await agent.deletePost(elt.getAttribute("uri"));
@@ -104,6 +105,10 @@ async function doDeleteTweets(event) {
         //     // const result = await agent[func](elt.getAttribute("uri"));
         //     console.log(`QQQ: Deleting ${h.rkey} => ${result}`);
         // }
+    }
+    if (itemsToDelete.length === candidateItems.length) {
+        // We deleted everything, so delete this page and either cursor ahead or back
+        deleteCurrentCursor()
     }
     await updateFeed(loginInfo);
 }
@@ -184,6 +189,19 @@ function addCursor(cursor) {
 
 function currentCursor() {
     return cursors[cursorIndex];
+}
+
+function deleteCurrentCursor() {
+    if (cursorIndex <= cursors.length - 1) {
+        // just delete this cursor and continue at this point
+        cursors.splice(cursorIndex, 1);
+    } else if (cursorIndex > 0) {
+        // delete this cursor but move back one
+        cursors.splice(cursorIndex, 1);
+        cursorIndex -= 1;
+    } else {
+        // We've cleared everything and there's nothing to do
+    }
 }
 
 function updateLinksBasedOnCursor() {
